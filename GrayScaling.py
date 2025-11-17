@@ -1,10 +1,9 @@
-#pip install opencv-python
-# pip install numpy
-
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
+
 # Loads the image
-image = cv2.imread("img/test_2.jpg")
+image = cv2.imread("img/test.jpg")
 
 
 # Converts to grayscale
@@ -34,11 +33,13 @@ cleaned_resized = cv2.resize(cleaned, (int(cleaned.shape[1] * height / cleaned.s
 # Combines all three images horizontally
 combined = cv2.hconcat([gray_resized, binary_resized, cleaned_resized])
 
-# Shows all three images together
-cv2.imshow("Grayscale | Adaptive Threshold | Morphology", combined)
+plt.figure(figsize=(14, 6))
+plt.imshow(combined, cmap="gray")
+plt.title("Grayscale | Adaptive Threshold | Morphology")
+plt.axis("off")
+plt.show()
 
-
-# Invert cleaned image for contour detection
+# Inverts cleaned image for contour detection
 cleaned_inv = cv2.bitwise_not(cleaned)  
 
 # Finds contours on the inverted cleaned binary image
@@ -50,11 +51,15 @@ image_contours = image.copy()
 # Loops through contours and draws rectangles around each detected symbol
 for cnt in contours:
     x, y, w, h = cv2.boundingRect(cnt)
-    # Optional: filter out tiny contours that are likely noise
+    # filters out tiny contours that are likely noise
     if w > 2 and h > 2:
         cv2.rectangle(image_contours, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
-# Shows the contours on the original image
-cv2.imshow("Contours Detection", image_contours)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+
+
+plt.figure(figsize=(8, 8))
+plt.imshow(cv2.cvtColor(image_contours, cv2.COLOR_BGR2RGB))
+plt.title("Contours Detection")
+plt.axis("off")
+plt.show()
+
